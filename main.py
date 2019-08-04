@@ -1,19 +1,32 @@
 import pygame
+import random
+from Plant import Plant
+from Rabbit import Rabbit
 from pygame.locals import *
 image = pygame.image.load("test.png")
-
+plantImage = pygame.image.load("plant.png")
+rabbitImage = pygame.image.load("rabbit.png")
+gameObjects = []
+plants = []
+rabbits = []
 
 class App:
     def __init__(self):
         self._running = True
         self._display_surf = None
-        self.size = self.weight, self.height = 640, 400
+        self.size = self.weight, self.height = 1600, 900
 
     def on_init(self):
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self._running = True
 
+        for i in range(0, 10):
+            plants.append(Plant(random.randint(100, 1500), random.randint(100, 800), plantImage, random.randint(200, 300), gameObjects, plants))
+        rabbits.append(Rabbit(random.randint(100, 1500), random.randint(100, 800), rabbitImage, 0.25, gameObjects, plants))
+
+        gameObjects.extend(rabbits)
+        gameObjects.extend(plants)
 
 
     def on_event(self, event):
@@ -21,10 +34,16 @@ class App:
             self._running = False
 
     def on_loop(self):
-        pass
+        i = 0
+        while i < gameObjects.__len__():
+            gameObjects[i].update()
+            i = i + 1
+
 
     def on_render(self):
-        self._display_surf.blit(image, (50, 50))
+        self._display_surf.fill([0, 200, 0])
+        for i in range(0, gameObjects.__len__()):
+            self._display_surf.blit(gameObjects[i].getImage(), (gameObjects[i].getX(), gameObjects[i].getY()))
         pygame.display.flip()
         pass
 
