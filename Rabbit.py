@@ -6,14 +6,14 @@ class Rabbit(GameObject):
     deathHunger = 1000
     starvationSpeed = 0.2
 
-    def __init__(self, x, y, image, speed, gameObjects, plants):
+    def __init__(self, x, y, image, speed, game):
         self.x = x
         self.y = y
         self.image = image
         self.hunger = 200
         self.speed = speed
-        self.gameObjects = gameObjects
-        self.plants = plants
+        self.game = game
+        self.target = None
 
     def increaseHunger(self):
         self.hunger = self.hunger + self.starvationSpeed
@@ -34,23 +34,22 @@ class Rabbit(GameObject):
             self.target.nutritionalValue = self.target.nutritionalValue - self.eatingSpeed
             self.hunger = self.hunger - self.eatingSpeed
             if(self.target.getNutritionalValue() <= 0):
-                self.target = self.findTarget(self.plants)
+                self.target = self.findTarget()
 
-
-    def findTarget(self, plants):
-         if self.hunger > 100:
-             self.target = plants[0]
-             for i in range(0, plants.__len__()):
-                 if self.distance(plants[i]) < self.distance(self.target):
-                     if(plants[i].getNutritionalValue() >= 0):
-                        self.target = plants[i]
-         else:
-             pass
+    def findTarget(self):
+        if self.hunger > 100 and self.game.getPlants().__len__() != 0:
+         self.target = self.game.getPlants()[0]
+         for i in range(0, self.game.getPlants().__len__()):
+             if self.distance(self.game.getPlants()[i]) < self.distance(self.target):
+                 if(self.game.getPlants()[i].getNutritionalValue() > 0):
+                    self.target = self.game.getPlants()[i]
+        else:
+            pass
 
 
     def update(self):
         self.increaseHunger()
-        self.findTarget(self.plants)
+        self.findTarget()
         if self.target is None:
             pass
         else:
@@ -58,7 +57,7 @@ class Rabbit(GameObject):
             self.eat()
 
         if self.hunger > self.deathHunger:
-            self.gameObjects.remove(self)
+            self.game.removeRabbit(self)
 
     def distance(self, gameObject):
         return math.sqrt((self.x - gameObject.x) ** 2 + (self.y - gameObject.y) ** 2)

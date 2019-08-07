@@ -22,8 +22,9 @@ class App:
         self._running = True
 
         for i in range(0, 10):
-            plants.append(Plant(random.randint(100, 1500), random.randint(100, 800), plantImage, random.randint(200, 300), gameObjects, plants))
-        rabbits.append(Rabbit(random.randint(100, 1500), random.randint(100, 800), rabbitImage, 0.25, gameObjects, plants))
+            plants.append(Plant(random.randint(100, 1500), random.randint(100, 800), plantImage, random.randint(200, 300), self))
+        for i in range (0,2):
+            rabbits.append(Rabbit(random.randint(100, 1500), random.randint(100, 800), rabbitImage, 0.25, self))
 
         gameObjects.extend(rabbits)
         gameObjects.extend(plants)
@@ -34,6 +35,9 @@ class App:
             self._running = False
 
     def on_loop(self):
+        gameObjects.clear()
+        gameObjects.extend(plants)
+        gameObjects.extend(rabbits)
         i = 0
         while i < gameObjects.__len__():
             gameObjects[i].update()
@@ -60,6 +64,21 @@ class App:
             self.on_loop()
             self.on_render()
         self.on_cleanup()
+
+
+
+
+    def getPlants(self):
+        return plants
+
+    def removePlant(self, plant):
+        plants.remove(plant)
+
+    def removeRabbit(self, rabbit):
+        rabbits.remove(rabbit)
+
+    def getGameObjects(self):
+        return gameObjects
 
 
 if __name__ == "__main__":
